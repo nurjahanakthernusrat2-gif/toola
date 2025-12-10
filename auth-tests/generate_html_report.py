@@ -4,34 +4,34 @@ from pathlib import Path
 def html_escape(x):
     return str(x).replace("<","&lt;").replace(">","&gt;")
 
-# Test case descriptions
+# Test case descriptions in English
 TEST_DESCRIPTIONS = {
-    "A_form_discovery": "Login form উপস্থিত আছে কি না চেক করা",
-    "B_form_action": "Form-এর action attribute আছে কি না চেক করা",
-    "C_method_check": "Form কোন HTTP method ব্যবহার করছে (GET/POST) চেক করা",
-    "D_csrf_presence": "CSRF token আছে কি না চেক করা",
-    "E_csrf_validation": "CSRF token ছাড়া submit করলে block হচ্ছে কি না",
-    "F_correct_login": "সঠিক credentials দিয়ে login চেষ্টা",
-    "G_wrong_login": "ভুল password দিয়ে login চেষ্টা",
-    "H_no_csrf_attack": "CSRF token বাদ দিয়ে login blocked কিনা চেক",
-    "I_session_fixation": "Session cookie properly assign হচ্ছে কি না",
-    "J_redirect_chain": "Login-এর পরে redirect ঠিকমতো কাজ করছে কি না",
-    "K_cookie_security": "Cookie-তে Secure ও HttpOnly flags আছে কি না",
-    "L_response_code": "Server response code (200, 302, 401, etc.)",
-    "M_rate_limit": "Repeated requests-এ rate-limit 429 response চেক",
-    "N_error_message": "Error message enumeration / sensitive info leakage",
-    "O_form_tamper": "Form data intentionally change করা হলে server handle করছে কি না",
-    "P_missing_fields": "কিছু field ছাড়া submit করলে server handle করছে কি না",
-    "Q_empty_request": "পুরো ফর্ম খালি রেখে submit করলে server response",
-    "R_invalid_method": "Invalid HTTP method (PUT/DELETE) block হচ্ছে কি না",
-    "S_payload_manipulation": "Suspicious payload injection test",
-    "T_special_char": "Special character input test",
-    "U_sqli_test": "SQL Injection attempt check",
-    "V_xss_test": "XSS payload injection test",
-    "W_bruteforce_health": "Multiple failed attempts-এর পরে server health",
-    "X_anti_bot_csrf": "Login response timing / Anti-bot check",
-    "Y_logout_behavior": "Logout endpoint behavior validation",
-    "Z_session_cleanup": "Session properly cleaned after logout"
+    "A_form_discovery": "Check if the login form is present on the page",
+    "B_form_action": "Verify that the form has an action attribute",
+    "C_method_check": "Confirm the HTTP method used by the form (GET/POST)",
+    "D_csrf_presence": "Check if a CSRF token is present",
+    "E_csrf_validation": "Verify server blocks submission without CSRF token",
+    "F_correct_login": "Attempt login with correct credentials",
+    "G_wrong_login": "Attempt login with incorrect password",
+    "H_no_csrf_attack": "Test login without CSRF token when it exists",
+    "I_session_fixation": "Check if session cookies are properly assigned",
+    "J_redirect_chain": "Verify login redirects function correctly",
+    "K_cookie_security": "Check cookies for Secure and HttpOnly flags",
+    "L_response_code": "Check server response codes (200, 302, 401, etc.)",
+    "M_rate_limit": "Test if repeated requests trigger rate-limiting",
+    "N_error_message": "Check for information leakage in error messages",
+    "O_form_tamper": "Test server handling of tampered form data",
+    "P_missing_fields": "Check submission with missing fields",
+    "Q_empty_request": "Submit empty form and check server response",
+    "R_invalid_method": "Test server handling of invalid HTTP methods",
+    "S_payload_manipulation": "Attempt suspicious input injection",
+    "T_special_char": "Test form with special characters in input",
+    "U_sqli_test": "Attempt SQL injection in login fields",
+    "V_xss_test": "Attempt XSS injection in login fields",
+    "W_bruteforce_health": "Check server stability under multiple failed logins",
+    "X_anti_bot_csrf": "Measure login response timing / Anti-bot check",
+    "Y_logout_behavior": "Validate logout endpoint behavior",
+    "Z_session_cleanup": "Ensure session is properly cleared after logout"
 }
 
 def generate_html(infile, outfile):
