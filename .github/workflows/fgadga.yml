@@ -1,0 +1,41 @@
+name: Authentication Scanner
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: "Target login URL"
+        required: true
+        default: ""
+
+jobs:
+  auth_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      run: |
+        python3 -m venv .venv
+        source .venv/bin/activate
+        pip install --upgrade pip
+        pip install requests beautifulsoup4 pytest
+
+    - name: Run Authentication Tests
+      run: |
+        source .venv/bin/activate
+        export TARGET_URL="${{ github.event.inputs.target_url }}"
+        python run_auth_tests.py
+
+    - name: Generate HTML Report
+      run: |
+        source .venv/bin/activate
+        python generate_html_report.py
+
+    - name: Upload Report Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: auth-report
+        path: reports/
