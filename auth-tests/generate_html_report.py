@@ -4,6 +4,36 @@ from pathlib import Path
 def html_escape(x):
     return str(x).replace("<","&lt;").replace(">","&gt;")
 
+# Test case descriptions
+TEST_DESCRIPTIONS = {
+    "A_form_discovery": "Login form উপস্থিত আছে কি না চেক করা",
+    "B_form_action": "Form-এর action attribute আছে কি না চেক করা",
+    "C_method_check": "Form কোন HTTP method ব্যবহার করছে (GET/POST) চেক করা",
+    "D_csrf_presence": "CSRF token আছে কি না চেক করা",
+    "E_csrf_validation": "CSRF token ছাড়া submit করলে block হচ্ছে কি না",
+    "F_correct_login": "সঠিক credentials দিয়ে login চেষ্টা",
+    "G_wrong_login": "ভুল password দিয়ে login চেষ্টা",
+    "H_no_csrf_attack": "CSRF token বাদ দিয়ে login blocked কিনা চেক",
+    "I_session_fixation": "Session cookie properly assign হচ্ছে কি না",
+    "J_redirect_chain": "Login-এর পরে redirect ঠিকমতো কাজ করছে কি না",
+    "K_cookie_security": "Cookie-তে Secure ও HttpOnly flags আছে কি না",
+    "L_response_code": "Server response code (200, 302, 401, etc.)",
+    "M_rate_limit": "Repeated requests-এ rate-limit 429 response চেক",
+    "N_error_message": "Error message enumeration / sensitive info leakage",
+    "O_form_tamper": "Form data intentionally change করা হলে server handle করছে কি না",
+    "P_missing_fields": "কিছু field ছাড়া submit করলে server handle করছে কি না",
+    "Q_empty_request": "পুরো ফর্ম খালি রেখে submit করলে server response",
+    "R_invalid_method": "Invalid HTTP method (PUT/DELETE) block হচ্ছে কি না",
+    "S_payload_manipulation": "Suspicious payload injection test",
+    "T_special_char": "Special character input test",
+    "U_sqli_test": "SQL Injection attempt check",
+    "V_xss_test": "XSS payload injection test",
+    "W_bruteforce_health": "Multiple failed attempts-এর পরে server health",
+    "X_anti_bot_csrf": "Login response timing / Anti-bot check",
+    "Y_logout_behavior": "Logout endpoint behavior validation",
+    "Z_session_cleanup": "Session properly cleaned after logout"
+}
+
 def generate_html(infile, outfile):
     with open(infile) as f:
         data = json.load(f)
@@ -48,12 +78,12 @@ def generate_html(infile, outfile):
 <div class="box">
     <h2>Test Cases (A–Z)</h2>
     <table>
-        <tr><th>Test</th><th>Status</th></tr>
+        <tr><th>Test</th><th>Description</th><th>Status</th></tr>
 """
 
-    # Render all tests dynamically
+    # Render all tests dynamically with description
     for key, value in data["tests"].items():
-        # Determine class based on value
+        description = TEST_DESCRIPTIONS.get(key, "")
         if isinstance(value, int):
             if value in (200, 301, 302):
                 cls = "ok"
@@ -66,7 +96,7 @@ def generate_html(infile, outfile):
             cls = "warn"
             display = html_escape(str(value))
 
-        html += f"<tr><td>{html_escape(key)}</td><td class='{cls}'>{display}</td></tr>\n"
+        html += f"<tr><td>{html_escape(key)}</td><td>{html_escape(description)}</td><td class='{cls}'>{display}</td></tr>\n"
 
     html += """
     </table>
