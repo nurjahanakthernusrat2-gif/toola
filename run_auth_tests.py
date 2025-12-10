@@ -1,33 +1,42 @@
 import os
-from core.http_client import HTTPClient
-from core.reporter import Reporter
-from core.detector import Detector
+import json
+import datetime
+import subprocess
 
-import importlib
+RESULT_FILE = "reports/results.json"
 
-def main():
-    BASE_URL = os.getenv("TARGET_URL")
-    if not BASE_URL:
-        print("TARGET_URL missing")
-        return
+def run_tests():
+    print("[+] Running authentication test suite")
 
-    print(f"[+] Running tests on: {BASE_URL}")
+    # ensure reports folder
+    os.makedirs("reports", exist_ok=True)
 
-    client = HTTPClient(BASE_URL)
-    reporter = Reporter()
+    result = subprocess.run(
+        ["pytest", "toola/tests", "-q", "--disable-warnings", "-s", "--maxfail=1"],
+        capture_output=True,
+        text=True
+    )
 
-    # load test modules dynamically
-    for f in os.listdir("tests"):
-        if f.startswith("test_") and f.endswith(".py"):
-            module_name = f"tests.{f[:-3]}"
-            mod = importlib.import_module(module_name)
-            print(f"  → Running {module_name}")
-            mod.run(client, reporter)
+    print(result.stdout)
 
-    # save reports
-    reporter.save_json()
-    reporter.save_html()
-    print("[+] Report generated!")
+    tests_output = {
+        "generated": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
+        "tests": []
+    }
+
+    # Read temporary test outputs from each test file
+    if os.path.exists("reports/tmp"):
+        for f in os.listdir("reports/tmp"):
+            if f.endswith(".json"):
+                with open(f"reports/tmp/{f}", "r") as fp:
+                    tests_output["tests"].append(json.load(fp))
+
+    # Save final results.json
+    with open(RESULT_FILE, "w") as fp:
+        json.dump(tests_output, fp, indent=4)
+
+    print(f"[+] Saved results to {RESULT_FILE}")
+
 
 if __name__ == "__main__":
-    main()
+    run_tests()
