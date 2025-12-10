@@ -51,14 +51,22 @@ def generate_html(infile, outfile):
         <tr><th>Test</th><th>Status</th></tr>
 """
 
-    # Automated status rendering  
-    def row(name, code):
-        status = "ok" if code in (301,302,200) else "fail"
-        return f"<tr><td>{name}</td><td class='{status}'>{code}</td></tr>"
+    # Render all tests dynamically
+    for key, value in data["tests"].items():
+        # Determine class based on value
+        if isinstance(value, int):
+            if value in (200, 301, 302):
+                cls = "ok"
+            elif value == 0:
+                cls = "warn"
+            else:
+                cls = "fail"
+            display = value
+        else:
+            cls = "warn"
+            display = html_escape(str(value))
 
-    html += row("A) Valid Login Attempt", data["tests"]["valid_login_status"])
-    html += row("B) Wrong Password Attempt", data["tests"]["wrong_login_status"])
-    html += row("C) Missing CSRF", data["tests"]["no_csrf_status"])
+        html += f"<tr><td>{html_escape(key)}</td><td class='{cls}'>{display}</td></tr>\n"
 
     html += """
     </table>
@@ -75,7 +83,6 @@ def generate_html(infile, outfile):
         f.write(html)
 
     print(f"[+] HTML report saved at: {outfile}")
-
 
 if __name__ == "__main__":
     Path("auth-tests/reports").mkdir(parents=True, exist_ok=True)
